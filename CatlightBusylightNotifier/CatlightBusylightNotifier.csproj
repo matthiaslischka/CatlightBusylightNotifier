@@ -40,8 +40,8 @@
       <HintPath>..\packages\Busylight.1.0.1.25\lib\Busylight.Sdk.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CatlightApi, Version=1.0.0.38903, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CatlightApi.1.0.0.38903\lib\net452\CatlightApi.dll</HintPath>
+    <Reference Include="CatlightApi, Version=1.0.1.18118, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CatlightApi.1.0.1.18118\lib\net452\CatlightApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
