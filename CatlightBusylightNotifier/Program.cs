@@ -20,7 +20,7 @@ namespace CatlightBusylightNotifier
         {
             private readonly BusylightLyncController _busylightLyncController = new BusylightLyncController();
 
-            private readonly Catlight _catlight = new Catlight();
+            private readonly CatlightConnector _catlightConnector = new CatlightConnector();
 
             public MyCustomApplicationContext()
             {
@@ -43,18 +43,29 @@ namespace CatlightBusylightNotifier
 
             private void UpdateStatus()
             {
-                var doesNeedAttention = _catlight.DoesNeedAttention();
-                switch (doesNeedAttention)
+                var catlightStatus = _catlightConnector.GetStatus();
+                switch (catlightStatus)
                 {
-                    case true:
-                        _busylightLyncController.Light(BusylightColor.Red);
+                    case CatlightStatus.CatlightNotFound:
+                        _busylightLyncController.Light(BusylightColor.Blue);
                         break;
-                    case false:
-                        _busylightLyncController.Light(BusylightColor.Green);
-                        break;
-                    case null:
+                    case CatlightStatus.NoProjects:
                         _busylightLyncController.Light(BusylightColor.Off);
                         break;
+                    case CatlightStatus.Ok:
+                    case CatlightStatus.Info:
+                        _busylightLyncController.Light(BusylightColor.Green);
+                        break;
+                    case CatlightStatus.WarningAcknowledged:
+                    case CatlightStatus.CriticalAcknowledged:
+                        _busylightLyncController.Light(BusylightColor.Yellow);
+                        break;
+                    case CatlightStatus.Warning:
+                    case CatlightStatus.Critical:
+                        _busylightLyncController.Light(BusylightColor.Red);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
 
