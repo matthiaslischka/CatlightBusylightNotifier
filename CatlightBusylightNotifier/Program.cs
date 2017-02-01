@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using CatlightApi;
 using CatlightBusylightNotifier.Properties;
 using Plenom.Components.Busylight.Sdk;
+using Sunnerberg.Autostarter;
 
 namespace CatlightBusylightNotifier
 {
@@ -11,21 +12,33 @@ namespace CatlightBusylightNotifier
         [STAThread]
         private static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MyCustomApplicationContext());
         }
 
         private class MyCustomApplicationContext : ApplicationContext
         {
+            private readonly Autostarter _autostarter = new Autostarter(Application.ExecutablePath);
             private readonly BusylightLyncController _busylightLyncController = new BusylightLyncController();
-
             private readonly CatlightConnector _catlightConnector = new CatlightConnector();
+            private MenuItem _autostartMenuItem;
 
             public MyCustomApplicationContext()
             {
+                CreateContextMenu();
+
+                var updateStatusTimer = new Timer {Interval = 10000};
+                updateStatusTimer.Tick += (sender, e) => UpdateStatus();
+                UpdateStatus();
+                updateStatusTimer.Start();
+            }
+
+            private void CreateContextMenu()
+            {
                 var trayMenu = new ContextMenu();
+                _autostartMenuItem = new MenuItem(string.Empty, OnAutostartToggle);
+                trayMenu.MenuItems.Add(_autostartMenuItem);
                 trayMenu.MenuItems.Add("Exit", OnExit);
+                UpdateAutostartMenuItemText();
 
                 var notifyIcon = new NotifyIcon
                 {
@@ -34,11 +47,25 @@ namespace CatlightBusylightNotifier
                     ContextMenu = trayMenu,
                     Visible = true
                 };
+            }
 
-                var updateStatusTimer = new Timer {Interval = 10000};
-                updateStatusTimer.Tick += (sender, e) => UpdateStatus();
-                UpdateStatus();
-                updateStatusTimer.Start();
+            private void OnAutostartToggle(object sender, EventArgs e)
+            {
+                var isAutostartEnabled = _autostarter.IsEnabled();
+
+                if (isAutostartEnabled)
+                    _autostarter.Disable();
+                else
+                    _autostarter.Enable();
+
+                UpdateAutostartMenuItemText();
+            }
+
+            private void UpdateAutostartMenuItemText()
+            {
+                _autostartMenuItem.Text = _autostarter.IsEnabled()
+                    ? "Don't Run At System Startup"
+                    : "Run At System Startup";
             }
 
             private void UpdateStatus()
