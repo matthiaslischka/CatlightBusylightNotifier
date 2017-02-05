@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
+using AutostartManagement;
 using CatlightApi;
 using CatlightBusylightNotifier.Properties;
 using Plenom.Components.Busylight.Sdk;
-using Sunnerberg.Autostarter;
 
 namespace CatlightBusylightNotifier
 {
@@ -17,7 +17,7 @@ namespace CatlightBusylightNotifier
 
         private class MyCustomApplicationContext : ApplicationContext
         {
-            private readonly Autostarter _autostarter = new Autostarter(Application.ExecutablePath);
+            private readonly AutostartManager _autostartManager = new AutostartManager(Application.ExecutablePath);
             private readonly BusylightLyncController _busylightLyncController = new BusylightLyncController();
             private readonly CatlightConnector _catlightConnector = new CatlightConnector();
             private MenuItem _autostartMenuItem;
@@ -51,19 +51,19 @@ namespace CatlightBusylightNotifier
 
             private void OnAutostartToggle(object sender, EventArgs e)
             {
-                var isAutostartEnabled = _autostarter.IsEnabled();
+                var isAutostartEnabled = _autostartManager.IsAutostartEnabled();
 
                 if (isAutostartEnabled)
-                    _autostarter.Disable();
+                    _autostartManager.DisableAutostart();
                 else
-                    _autostarter.Enable();
+                    _autostartManager.EnableAutostart();
 
                 UpdateAutostartMenuItemText();
             }
 
             private void UpdateAutostartMenuItemText()
             {
-                _autostartMenuItem.Text = _autostarter.IsEnabled()
+                _autostartMenuItem.Text = _autostartManager.IsAutostartEnabled()
                     ? "Don't Run At System Startup"
                     : "Run At System Startup";
             }

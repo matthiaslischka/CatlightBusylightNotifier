@@ -36,6 +36,10 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutostartManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutostartManager.1.0.0-alpha\lib\net452\AutostartManager.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Busylight.Sdk, Version=1.0.1.25, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Busylight.1.0.1.25\lib\Busylight.Sdk.dll</HintPath>
       <Private>True</Private>
@@ -46,10 +50,6 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Sunnerberg.Autostarter, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Autostarter.1.0.0\lib\Sunnerberg.Autostarter.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
