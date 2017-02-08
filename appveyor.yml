@@ -1,0 +1,27 @@
+configuration: Release
+
+skip_commits:
+    files:
+        - README.md
+
+before_build:
+    nuget restore
+ 
+after_build:
+    7z a CatlightBusylightNotifier.zip %APPVEYOR_BUILD_FOLDER%\CatlightBusylightNotifier\bin\Release\*.exe %APPVEYOR_BUILD_FOLDER%\CatlightBusylightNotifier\bin\Release\*.dll
+ 
+artifacts: 
+    path: CatlightBusylightNotifier.zip
+    name: CatlightBusylightNotifier
+    
+deploy:
+    description: 'CatlightBusylightNotifier'
+    provider: GitHub
+    auth_token:
+        secure: MidR5T9SuBalncsh2ACJNGHmZzsmGYj3yHt1phhIX1Wlafm0TxRr5fztAfPe7c4d
+    artifact: CatlightBusylightNotifier
+    draft: false
+    prerelease: false
+    on:
+        branch: master
+        appveyor_repo_tag: true
