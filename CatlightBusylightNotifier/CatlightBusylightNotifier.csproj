@@ -35,6 +35,9 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\1481754117_traffic.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AutostartManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\AutostartManager.1.0.0-alpha\lib\net452\AutostartManager.dll</HintPath>
@@ -85,7 +88,6 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Resources\Icon1.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\1481754117_traffic.ico" />
