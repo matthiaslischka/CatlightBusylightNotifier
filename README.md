@@ -1,11 +1,10 @@
 # CatlightBusylightNotifier
-Catlight Status Notification with Plenom Busylight
-
-
 ![alt tag](CatlightBusylightNotifier/Resources/1481754117_traffic.ico)
 
-* WIP
-* Windows Only ATM
+[![Build status](https://ci.appveyor.com/api/projects/status/26e9b084whrgxtwy?svg=true)](https://ci.appveyor.com/project/matthiaslischka/catlightbusylightnotifier)
+
+Catlight Status Notification with Plenom Busylight
+* Windows Only
 
 | Light Color | Status |
 | --- | --- |
