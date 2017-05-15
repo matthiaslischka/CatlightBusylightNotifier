@@ -8,7 +8,7 @@ before_build:
     nuget restore
  
 after_build:
-    7z a CatlightBusylightNotifier.zip %APPVEYOR_BUILD_FOLDER%\CatlightBusylightNotifier\bin\Release\*.exe %APPVEYOR_BUILD_FOLDER%\CatlightBusylightNotifier\bin\Release\*.dll
+    7z a CatlightBusylightNotifier.zip %APPVEYOR_BUILD_FOLDER%\CatlightBusylightNotifier\bin\Release\*.exe %APPVEYOR_BUILD_FOLDER%\CatlightBusylightNotifier\bin\Release\*.dll %APPVEYOR_BUILD_FOLDER%\CatlightBusylightNotifier\bin\Release\CatlightBusylightNotifier.exe.config
  
 artifacts: 
     path: CatlightBusylightNotifier.zip
