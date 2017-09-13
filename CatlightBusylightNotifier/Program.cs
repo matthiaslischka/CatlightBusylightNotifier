@@ -20,7 +20,9 @@ namespace CatlightBusylightNotifier
             private readonly AutostartManager _autostartManager = new AutostartManager(Application.ExecutablePath);
             private readonly BusylightLyncController _busylightLyncController = new BusylightLyncController();
             private readonly CatlightConnector _catlightConnector = new CatlightConnector();
+            private MenuItem _alarmSoundMenuItem;
             private MenuItem _autostartMenuItem;
+            private BusylightColor _currentBusylightColor = BusylightColor.Off;
 
             public MyCustomApplicationContext()
             {
@@ -35,10 +37,16 @@ namespace CatlightBusylightNotifier
             private void CreateContextMenu()
             {
                 var trayMenu = new ContextMenu();
+
                 _autostartMenuItem = new MenuItem(string.Empty, OnAutostartToggle);
                 trayMenu.MenuItems.Add(_autostartMenuItem);
-                trayMenu.MenuItems.Add("Exit", OnExit);
                 UpdateAutostartMenuItemText();
+
+                _alarmSoundMenuItem = new MenuItem(string.Empty, OnAlarmSoundToggle);
+                trayMenu.MenuItems.Add(_alarmSoundMenuItem);
+                UpdateAlarmSoundMenuItemText();
+
+                trayMenu.MenuItems.Add("Exit", OnExit);
 
                 var notifyIcon = new NotifyIcon
                 {
@@ -68,32 +76,59 @@ namespace CatlightBusylightNotifier
                     : "Run At System Startup";
             }
 
+            private void OnAlarmSoundToggle(object sender, EventArgs e)
+            {
+                var isAlarmSoundEnabled = Settings.Default.IsAlarmSoundEnabled;
+                Settings.Default.IsAlarmSoundEnabled = !isAlarmSoundEnabled;
+                Settings.Default.Save();
+                UpdateAlarmSoundMenuItemText();
+            }
+
+            private void UpdateAlarmSoundMenuItemText()
+            {
+                _alarmSoundMenuItem.Text = Settings.Default.IsAlarmSoundEnabled
+                    ? "Disable Alarmsound On Broken Build"
+                    : "Enable Alarmsound On Broken Build";
+            }
+
             private void UpdateStatus()
             {
                 var catlightStatus = _catlightConnector.GetStatus();
+                BusylightColor newBusylightColor;
+
                 switch (catlightStatus)
                 {
                     case CatlightStatus.CatlightNotFound:
-                        _busylightLyncController.Light(BusylightColor.Blue);
+                        newBusylightColor = BusylightColor.Blue;
                         break;
                     case CatlightStatus.NoProjects:
-                        _busylightLyncController.Light(BusylightColor.Off);
+                        newBusylightColor = BusylightColor.Off;
                         break;
                     case CatlightStatus.Ok:
                     case CatlightStatus.Info:
-                        _busylightLyncController.Light(BusylightColor.Green);
+                        newBusylightColor = BusylightColor.Green;
                         break;
                     case CatlightStatus.WarningAcknowledged:
                     case CatlightStatus.CriticalAcknowledged:
-                        _busylightLyncController.Light(BusylightColor.Yellow);
+                        newBusylightColor = BusylightColor.Yellow;
                         break;
                     case CatlightStatus.Warning:
                     case CatlightStatus.Critical:
-                        _busylightLyncController.Light(BusylightColor.Red);
+                        newBusylightColor = BusylightColor.Red;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
+
+                var playAlarmSound = Settings.Default.IsAlarmSoundEnabled && newBusylightColor == BusylightColor.Red && _currentBusylightColor != BusylightColor.Red;
+
+                if (playAlarmSound)
+                    _busylightLyncController.Alert(newBusylightColor, BusylightSoundClip.FairyTale,
+                        BusylightVolume.Max);
+                else
+                    _busylightLyncController.Light(newBusylightColor);
+
+                _currentBusylightColor = newBusylightColor;
             }
 
             private void OnExit(object sender, EventArgs e)
