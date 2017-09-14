@@ -14,3 +14,8 @@ Catlight Status Notification with Plenom Busylight
 | Green | All OK. |
 | Yellow | Warning or Critical but already acknowledged in Catlight. |
 | Red | Warning or Critical. Investigate your build! |
+
+<br><br>
+
+Autostart and Broken Build Notification Sound Functionality
+![](contextMenu.png)
