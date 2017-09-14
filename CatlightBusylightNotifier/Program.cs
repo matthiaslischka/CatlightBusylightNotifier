@@ -28,7 +28,7 @@ namespace CatlightBusylightNotifier
             {
                 CreateContextMenu();
 
-                var updateStatusTimer = new Timer {Interval = 10000};
+                var updateStatusTimer = new Timer {Interval = 5000};
                 updateStatusTimer.Tick += (sender, e) => UpdateStatus();
                 UpdateStatus();
                 updateStatusTimer.Start();
@@ -123,8 +123,8 @@ namespace CatlightBusylightNotifier
                 var playAlarmSound = Settings.Default.IsAlarmSoundEnabled && newBusylightColor == BusylightColor.Red && _currentBusylightColor != BusylightColor.Red;
 
                 if (playAlarmSound)
-                    _busylightLyncController.Alert(newBusylightColor, BusylightSoundClip.FairyTale,
-                        BusylightVolume.Max);
+                    _busylightLyncController.Alert(newBusylightColor, BusylightSoundClip.OpenOffice,
+                        BusylightVolume.Middle);
                 else
                     _busylightLyncController.Light(newBusylightColor);
 
