@@ -13,6 +13,8 @@ after_build:
 artifacts: 
     path: CatlightBusylightNotifier.zip
     name: CatlightBusylightNotifier
+
+image: Visual Studio 2017
     
 deploy:
     description: 'CatlightBusylightNotifier'
