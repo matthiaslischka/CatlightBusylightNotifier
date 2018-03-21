@@ -20,8 +20,8 @@ namespace CatlightBusylightNotifier
             private readonly AutostartManager _autostartManager = new AutostartManager(Application.ExecutablePath);
             private readonly BusylightLyncController _busylightLyncController = new BusylightLyncController();
             private readonly CatlightConnector _catlightConnector = new CatlightConnector();
-            private MenuItem _alarmSoundMenuItem;
             private MenuItem _autostartMenuItem;
+            private MenuItem _soundMenuItem;
             private BusylightColor _currentBusylightColor = BusylightColor.Off;
 
             public MyCustomApplicationContext()
@@ -42,9 +42,13 @@ namespace CatlightBusylightNotifier
                 trayMenu.MenuItems.Add(_autostartMenuItem);
                 UpdateAutostartMenuItemText();
 
-                _alarmSoundMenuItem = new MenuItem(string.Empty, OnAlarmSoundToggle);
-                trayMenu.MenuItems.Add(_alarmSoundMenuItem);
-                UpdateAlarmSoundMenuItemText();
+                _soundMenuItem = new MenuItem("Alarmsound On Broken Build");
+                trayMenu.MenuItems.Add(_soundMenuItem);
+                foreach (Enum soundClip in Enum.GetValues(typeof(BusylightSoundClip)))
+                {
+                    _soundMenuItem.MenuItems.Add(soundClip.ToString(), SoundChanged);
+                    UpdateSelectedSoundMenuItemMenu();
+                }
 
                 trayMenu.MenuItems.Add("Exit", OnExit);
 
@@ -76,19 +80,22 @@ namespace CatlightBusylightNotifier
                     : "Run At System Startup";
             }
 
-            private void OnAlarmSoundToggle(object sender, EventArgs e)
+            private void SoundChanged(object sender, EventArgs e)
             {
-                var isAlarmSoundEnabled = Settings.Default.IsAlarmSoundEnabled;
-                Settings.Default.IsAlarmSoundEnabled = !isAlarmSoundEnabled;
-                Settings.Default.Save();
-                UpdateAlarmSoundMenuItemText();
+                Enum.TryParse(((MenuItem) sender).Text, out BusylightSoundClip soundClip);
+                Settings.Default.AlarmSound = soundClip;
+                _busylightLyncController.Alert(_currentBusylightColor, Settings.Default.AlarmSound,
+                    BusylightVolume.Middle);
+                UpdateSelectedSoundMenuItemMenu();
             }
 
-            private void UpdateAlarmSoundMenuItemText()
+            private void UpdateSelectedSoundMenuItemMenu()
             {
-                _alarmSoundMenuItem.Text = Settings.Default.IsAlarmSoundEnabled
-                    ? "Disable Alarmsound On Broken Build"
-                    : "Enable Alarmsound On Broken Build";
+                foreach (MenuItem menuItem in _soundMenuItem.MenuItems)
+                {
+                    var isCurrentSound = menuItem.Text == Settings.Default.AlarmSound.ToString();
+                    menuItem.Checked = isCurrentSound;
+                }
             }
 
             private void UpdateStatus()
@@ -120,10 +127,11 @@ namespace CatlightBusylightNotifier
                         throw new ArgumentOutOfRangeException();
                 }
 
-                var playAlarmSound = Settings.Default.IsAlarmSoundEnabled && newBusylightColor == BusylightColor.Red && _currentBusylightColor != BusylightColor.Red;
+                var playAlarmSound = newBusylightColor == BusylightColor.Red &&
+                                     _currentBusylightColor != BusylightColor.Red;
 
                 if (playAlarmSound)
-                    _busylightLyncController.Alert(newBusylightColor, BusylightSoundClip.OpenOffice,
+                    _busylightLyncController.Alert(newBusylightColor, Settings.Default.AlarmSound,
                         BusylightVolume.Middle);
                 else
                     _busylightLyncController.Light(newBusylightColor);
