@@ -25,13 +25,25 @@ namespace CatlightBusylightNotifier.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool IsAlarmSoundEnabled {
+        [global::System.Configuration.DefaultSettingValueAttribute("Quiet")]
+        public global::Plenom.Components.Busylight.Sdk.BusylightSoundClip AlarmSound {
             get {
-                return ((bool)(this["IsAlarmSoundEnabled"]));
+                return ((global::Plenom.Components.Busylight.Sdk.BusylightSoundClip)(this["AlarmSound"]));
             }
             set {
-                this["IsAlarmSoundEnabled"] = value;
+                this["AlarmSound"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool MuteAlarmSound {
+            get {
+                return ((bool)(this["MuteAlarmSound"]));
+            }
+            set {
+                this["MuteAlarmSound"] = value;
             }
         }
     }
