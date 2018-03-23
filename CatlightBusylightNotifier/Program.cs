@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using AutostartManagement;
 using CatlightApi;
 using CatlightBusylightNotifier.Properties;
 using Plenom.Components.Busylight.Sdk;
@@ -17,114 +16,26 @@ namespace CatlightBusylightNotifier
 
         private class MyCustomApplicationContext : ApplicationContext
         {
-            private readonly AutostartManager _autostartManager = new AutostartManager(Application.ExecutablePath);
             private readonly BusylightLyncController _busylightLyncController = new BusylightLyncController();
             private readonly CatlightConnector _catlightConnector = new CatlightConnector();
-            private MenuItem _autostartMenuItem;
 
             private BusylightColor _currentBusylightColor = BusylightColor.Off;
 
-            private MenuItem _soundMenuItem;
-            private MenuItem _volumeMenuItem;
-
             public MyCustomApplicationContext()
             {
-                CreateContextMenu();
+                // ReSharper disable once ObjectCreationAsStatement
+                new NotifyIcon
+                {
+                    Text = @"Catlight Busylight Notifier",
+                    Icon = Resources._1481754117_traffic,
+                    ContextMenu = new ContextMenu(PlayAlarm),
+                    Visible = true
+                };
 
                 var updateStatusTimer = new Timer {Interval = 5000};
                 updateStatusTimer.Tick += (sender, e) => UpdateStatus();
                 UpdateStatus();
                 updateStatusTimer.Start();
-            }
-
-            private void CreateContextMenu()
-            {
-                var trayMenu = new ContextMenu();
-
-                _soundMenuItem = new MenuItem("Sound On Broken Build");
-                trayMenu.MenuItems.Add(_soundMenuItem);
-                CreateSubmenuFromEnum<BusylightSoundClip>(_soundMenuItem, SoundChanged);
-                UpdateSelectedSoundMenuItem();
-                
-                _volumeMenuItem = new MenuItem("Volume");
-                trayMenu.MenuItems.Add(_volumeMenuItem);
-                CreateSubmenuFromEnum<BusylightVolume>(_volumeMenuItem, VolumeChanged);
-                UpdateSelectedVolumeMenuItem();
-
-                _autostartMenuItem = new MenuItem("Run At System Startup", OnAutostartToggle);
-                trayMenu.MenuItems.Add(_autostartMenuItem);
-                UpdateSelectedAutostartMenutem();
-
-                trayMenu.MenuItems.Add("Exit", OnExit);
-
-                var notifyIcon = new NotifyIcon
-                {
-                    Text = @"Catlight Busylight Notifier",
-                    Icon = Resources._1481754117_traffic,
-                    ContextMenu = trayMenu,
-                    Visible = true
-                };
-            }
-
-            private void CreateSubmenuFromEnum<TEnum>(MenuItem menuItem, EventHandler onClick) where TEnum : struct
-            {
-                foreach (Enum enumValue in Enum.GetValues(typeof(TEnum)))
-                {
-                    menuItem.MenuItems.Add(enumValue.ToString(), onClick);
-                }
-            }
-
-            private void SoundChanged(object sender, EventArgs e)
-            {
-                Enum.TryParse(((MenuItem) sender).Text, out BusylightSoundClip soundClip);
-                Settings.Default.Sound = soundClip;
-                Settings.Default.Save();
-                PlayAlarm();
-                UpdateSelectedSoundMenuItem();
-            }
-
-            private void UpdateSelectedSoundMenuItem()
-            {
-                foreach (MenuItem menuItem in _soundMenuItem.MenuItems)
-                {
-                    var isCurrentSound = menuItem.Text == Settings.Default.Sound.ToString();
-                    menuItem.Checked = isCurrentSound;
-                }
-            }
-
-            private void VolumeChanged(object sender, EventArgs e)
-            {
-                Enum.TryParse(((MenuItem) sender).Text, out BusylightVolume volume);
-                Settings.Default.Volume = volume;
-                Settings.Default.Save();
-                PlayAlarm();
-                UpdateSelectedVolumeMenuItem();
-            }
-
-            private void UpdateSelectedVolumeMenuItem()
-            {
-                foreach (MenuItem menuItem in _volumeMenuItem.MenuItems)
-                {
-                    var isCurrentVolume = menuItem.Text == Settings.Default.Volume.ToString();
-                    menuItem.Checked = isCurrentVolume;
-                }
-            }
-
-            private void OnAutostartToggle(object sender, EventArgs e)
-            {
-                var isAutostartEnabled = _autostartManager.IsAutostartEnabled();
-
-                if (isAutostartEnabled)
-                    _autostartManager.DisableAutostart();
-                else
-                    _autostartManager.EnableAutostart();
-
-                UpdateSelectedAutostartMenutem();
-            }
-
-            private void UpdateSelectedAutostartMenutem()
-            {
-                _autostartMenuItem.Checked = _autostartManager.IsAutostartEnabled();
             }
 
             private void UpdateStatus()
@@ -172,10 +83,10 @@ namespace CatlightBusylightNotifier
                     Settings.Default.Volume);
             }
 
-            private void OnExit(object sender, EventArgs e)
+            protected override void Dispose(bool disposing)
             {
+                base.Dispose(disposing);
                 _busylightLyncController.Light(BusylightColor.Off);
-                Application.Exit();
             }
         }
     }
