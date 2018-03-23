@@ -5,9 +5,6 @@
     <Setting Name="AlarmSound" Type="Plenom.Components.Busylight.Sdk.BusylightSoundClip" Scope="User">
       <Value Profile="(Default)">Quiet</Value>
     </Setting>
-    <Setting Name="MuteAlarmSound" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="SoundVolume" Type="Plenom.Components.Busylight.Sdk.BusylightVolume" Scope="User">
       <Value Profile="(Default)">Middle</Value>
     </Setting>
