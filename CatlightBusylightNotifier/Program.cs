@@ -21,9 +21,11 @@ namespace CatlightBusylightNotifier
             private readonly BusylightLyncController _busylightLyncController = new BusylightLyncController();
             private readonly CatlightConnector _catlightConnector = new CatlightConnector();
             private MenuItem _autostartMenuItem;
+
             private BusylightColor _currentBusylightColor = BusylightColor.Off;
+
             private MenuItem _soundMenuItem;
-            private MenuItem _soundVolumeMenuItem;
+            private MenuItem _volumeMenuItem;
 
             public MyCustomApplicationContext()
             {
@@ -39,10 +41,6 @@ namespace CatlightBusylightNotifier
             {
                 var trayMenu = new ContextMenu();
 
-                _autostartMenuItem = new MenuItem(string.Empty, OnAutostartToggle);
-                trayMenu.MenuItems.Add(_autostartMenuItem);
-                UpdateAutostartMenuItemText();
-
                 _soundMenuItem = new MenuItem("Sound On Broken Build");
                 trayMenu.MenuItems.Add(_soundMenuItem);
                 foreach (Enum soundClip in Enum.GetValues(typeof(BusylightSoundClip)))
@@ -51,13 +49,17 @@ namespace CatlightBusylightNotifier
                     UpdateSelectedSoundMenuItemMenu();
                 }
 
-                _soundVolumeMenuItem = new MenuItem("Volume");
-                trayMenu.MenuItems.Add(_soundVolumeMenuItem);
-                foreach (Enum soundVolume in Enum.GetValues(typeof(BusylightVolume)))
+                _volumeMenuItem = new MenuItem("Volume");
+                trayMenu.MenuItems.Add(_volumeMenuItem);
+                foreach (Enum volume in Enum.GetValues(typeof(BusylightVolume)))
                 {
-                    _soundVolumeMenuItem.MenuItems.Add(soundVolume.ToString(), SoundVolumeChanged);
-                    UpdateSelectedSoundVolumeMenuItem();
+                    _volumeMenuItem.MenuItems.Add(volume.ToString(), VolumeChanged);
+                    UpdateSelectedVolumeMenuItem();
                 }
+
+                _autostartMenuItem = new MenuItem("Run At System Startup", OnAutostartToggle);
+                trayMenu.MenuItems.Add(_autostartMenuItem);
+                UpdateSelectedAutostartMenutem();
 
                 trayMenu.MenuItems.Add("Exit", OnExit);
 
@@ -70,29 +72,10 @@ namespace CatlightBusylightNotifier
                 };
             }
 
-            private void OnAutostartToggle(object sender, EventArgs e)
-            {
-                var isAutostartEnabled = _autostartManager.IsAutostartEnabled();
-
-                if (isAutostartEnabled)
-                    _autostartManager.DisableAutostart();
-                else
-                    _autostartManager.EnableAutostart();
-
-                UpdateAutostartMenuItemText();
-            }
-
-            private void UpdateAutostartMenuItemText()
-            {
-                _autostartMenuItem.Text = _autostartManager.IsAutostartEnabled()
-                    ? "Don't Run At System Startup"
-                    : "Run At System Startup";
-            }
-
             private void SoundChanged(object sender, EventArgs e)
             {
                 Enum.TryParse(((MenuItem) sender).Text, out BusylightSoundClip soundClip);
-                Settings.Default.AlarmSound = soundClip;
+                Settings.Default.Sound = soundClip;
                 Settings.Default.Save();
                 PlayAlarm();
                 UpdateSelectedSoundMenuItemMenu();
@@ -102,27 +85,44 @@ namespace CatlightBusylightNotifier
             {
                 foreach (MenuItem menuItem in _soundMenuItem.MenuItems)
                 {
-                    var isCurrentSound = menuItem.Text == Settings.Default.AlarmSound.ToString();
+                    var isCurrentSound = menuItem.Text == Settings.Default.Sound.ToString();
                     menuItem.Checked = isCurrentSound;
                 }
             }
 
-            private void SoundVolumeChanged(object sender, EventArgs e)
+            private void VolumeChanged(object sender, EventArgs e)
             {
-                Enum.TryParse(((MenuItem) sender).Text, out BusylightVolume soundVolume);
-                Settings.Default.SoundVolume = soundVolume;
+                Enum.TryParse(((MenuItem) sender).Text, out BusylightVolume volume);
+                Settings.Default.Volume = volume;
                 Settings.Default.Save();
                 PlayAlarm();
-                UpdateSelectedSoundVolumeMenuItem();
+                UpdateSelectedVolumeMenuItem();
             }
 
-            private void UpdateSelectedSoundVolumeMenuItem()
+            private void UpdateSelectedVolumeMenuItem()
             {
-                foreach (MenuItem menuItem in _soundVolumeMenuItem.MenuItems)
+                foreach (MenuItem menuItem in _volumeMenuItem.MenuItems)
                 {
-                    var isCurrentVolume = menuItem.Text == Settings.Default.SoundVolume.ToString();
+                    var isCurrentVolume = menuItem.Text == Settings.Default.Volume.ToString();
                     menuItem.Checked = isCurrentVolume;
                 }
+            }
+
+            private void OnAutostartToggle(object sender, EventArgs e)
+            {
+                var isAutostartEnabled = _autostartManager.IsAutostartEnabled();
+
+                if (isAutostartEnabled)
+                    _autostartManager.DisableAutostart();
+                else
+                    _autostartManager.EnableAutostart();
+
+                UpdateSelectedAutostartMenutem();
+            }
+
+            private void UpdateSelectedAutostartMenutem()
+            {
+                _autostartMenuItem.Checked = _autostartManager.IsAutostartEnabled();
             }
 
             private void UpdateStatus()
@@ -166,8 +166,8 @@ namespace CatlightBusylightNotifier
 
             private void PlayAlarm()
             {
-                _busylightLyncController.Alert(_currentBusylightColor, Settings.Default.AlarmSound,
-                    Settings.Default.SoundVolume);
+                _busylightLyncController.Alert(_currentBusylightColor, Settings.Default.Sound,
+                    Settings.Default.Volume);
             }
 
             private void OnExit(object sender, EventArgs e)

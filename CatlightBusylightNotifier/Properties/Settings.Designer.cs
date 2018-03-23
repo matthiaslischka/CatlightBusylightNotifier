@@ -26,24 +26,24 @@ namespace CatlightBusylightNotifier.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Quiet")]
-        public global::Plenom.Components.Busylight.Sdk.BusylightSoundClip AlarmSound {
+        public global::Plenom.Components.Busylight.Sdk.BusylightSoundClip Sound {
             get {
-                return ((global::Plenom.Components.Busylight.Sdk.BusylightSoundClip)(this["AlarmSound"]));
+                return ((global::Plenom.Components.Busylight.Sdk.BusylightSoundClip)(this["Sound"]));
             }
             set {
-                this["AlarmSound"] = value;
+                this["Sound"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Middle")]
-        public global::Plenom.Components.Busylight.Sdk.BusylightVolume SoundVolume {
+        public global::Plenom.Components.Busylight.Sdk.BusylightVolume Volume {
             get {
-                return ((global::Plenom.Components.Busylight.Sdk.BusylightVolume)(this["SoundVolume"]));
+                return ((global::Plenom.Components.Busylight.Sdk.BusylightVolume)(this["Volume"]));
             }
             set {
-                this["SoundVolume"] = value;
+                this["Volume"] = value;
             }
         }
     }
