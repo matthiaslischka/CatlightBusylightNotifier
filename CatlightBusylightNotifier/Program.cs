@@ -43,19 +43,13 @@ namespace CatlightBusylightNotifier
 
                 _soundMenuItem = new MenuItem("Sound On Broken Build");
                 trayMenu.MenuItems.Add(_soundMenuItem);
-                foreach (Enum soundClip in Enum.GetValues(typeof(BusylightSoundClip)))
-                {
-                    _soundMenuItem.MenuItems.Add(soundClip.ToString(), SoundChanged);
-                    UpdateSelectedSoundMenuItemMenu();
-                }
-
+                CreateSubmenuFromEnum<BusylightSoundClip>(_soundMenuItem, SoundChanged);
+                UpdateSelectedSoundMenuItem();
+                
                 _volumeMenuItem = new MenuItem("Volume");
                 trayMenu.MenuItems.Add(_volumeMenuItem);
-                foreach (Enum volume in Enum.GetValues(typeof(BusylightVolume)))
-                {
-                    _volumeMenuItem.MenuItems.Add(volume.ToString(), VolumeChanged);
-                    UpdateSelectedVolumeMenuItem();
-                }
+                CreateSubmenuFromEnum<BusylightVolume>(_volumeMenuItem, VolumeChanged);
+                UpdateSelectedVolumeMenuItem();
 
                 _autostartMenuItem = new MenuItem("Run At System Startup", OnAutostartToggle);
                 trayMenu.MenuItems.Add(_autostartMenuItem);
@@ -72,16 +66,24 @@ namespace CatlightBusylightNotifier
                 };
             }
 
+            private void CreateSubmenuFromEnum<TEnum>(MenuItem menuItem, EventHandler onClick) where TEnum : struct
+            {
+                foreach (Enum enumValue in Enum.GetValues(typeof(TEnum)))
+                {
+                    menuItem.MenuItems.Add(enumValue.ToString(), onClick);
+                }
+            }
+
             private void SoundChanged(object sender, EventArgs e)
             {
                 Enum.TryParse(((MenuItem) sender).Text, out BusylightSoundClip soundClip);
                 Settings.Default.Sound = soundClip;
                 Settings.Default.Save();
                 PlayAlarm();
-                UpdateSelectedSoundMenuItemMenu();
+                UpdateSelectedSoundMenuItem();
             }
 
-            private void UpdateSelectedSoundMenuItemMenu()
+            private void UpdateSelectedSoundMenuItem()
             {
                 foreach (MenuItem menuItem in _soundMenuItem.MenuItems)
                 {
