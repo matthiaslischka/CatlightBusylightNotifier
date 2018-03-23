@@ -8,5 +8,8 @@
     <Setting Name="MuteAlarmSound" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="SoundVolume" Type="Plenom.Components.Busylight.Sdk.BusylightVolume" Scope="User">
+      <Value Profile="(Default)">Middle</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

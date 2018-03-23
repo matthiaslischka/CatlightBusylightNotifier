@@ -24,6 +24,7 @@ namespace CatlightBusylightNotifier
             private BusylightColor _currentBusylightColor = BusylightColor.Off;
             private MenuItem _muteAlarmSoundMenuItem;
             private MenuItem _soundMenuItem;
+            private MenuItem _soundVolumeMenuItem;
 
             public MyCustomApplicationContext()
             {
@@ -54,6 +55,14 @@ namespace CatlightBusylightNotifier
                     UpdateSelectedSoundMenuItemMenu();
                 }
                 UpdateMuteAlarmSoundMenuItemText();
+
+                _soundVolumeMenuItem = new MenuItem("Sound Volume");
+                trayMenu.MenuItems.Add(_soundVolumeMenuItem);
+                foreach (Enum soundVolume in Enum.GetValues(typeof(BusylightVolume)))
+                {
+                    _soundVolumeMenuItem.MenuItems.Add(soundVolume.ToString(), SoundVolumeChanged);
+                    UpdateSelectedSoundVolumeMenuItem();
+                }
 
                 trayMenu.MenuItems.Add("Exit", OnExit);
 
@@ -106,9 +115,15 @@ namespace CatlightBusylightNotifier
             {
                 Enum.TryParse(((MenuItem) sender).Text, out BusylightSoundClip soundClip);
                 Settings.Default.AlarmSound = soundClip;
-                _busylightLyncController.Alert(_currentBusylightColor, Settings.Default.AlarmSound,
-                    BusylightVolume.Low);
+                Settings.Default.Save();
+                PlayAlarm();
                 UpdateSelectedSoundMenuItemMenu();
+            }
+
+            private void PlayAlarm()
+            {
+                _busylightLyncController.Alert(_currentBusylightColor, Settings.Default.AlarmSound,
+                    Settings.Default.SoundVolume);
             }
 
             private void UpdateSelectedSoundMenuItemMenu()
@@ -117,6 +132,24 @@ namespace CatlightBusylightNotifier
                 {
                     var isCurrentSound = menuItem.Text == Settings.Default.AlarmSound.ToString();
                     menuItem.Checked = isCurrentSound;
+                }
+            }
+
+            private void SoundVolumeChanged(object sender, EventArgs e)
+            {
+                Enum.TryParse(((MenuItem) sender).Text, out BusylightVolume soundVolume);
+                Settings.Default.SoundVolume = soundVolume;
+                Settings.Default.Save();
+                PlayAlarm();
+                UpdateSelectedSoundVolumeMenuItem();
+            }
+
+            private void UpdateSelectedSoundVolumeMenuItem()
+            {
+                foreach (MenuItem menuItem in _soundVolumeMenuItem.MenuItems)
+                {
+                    var isCurrentVolume = menuItem.Text == Settings.Default.SoundVolume.ToString();
+                    menuItem.Checked = isCurrentVolume;
                 }
             }
 
