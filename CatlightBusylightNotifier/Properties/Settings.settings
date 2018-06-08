@@ -2,11 +2,11 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="CatlightBusylightNotifier.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="AlarmSound" Type="Plenom.Components.Busylight.Sdk.BusylightSoundClip" Scope="User">
+    <Setting Name="Sound" Type="Plenom.Components.Busylight.Sdk.BusylightSoundClip" Scope="User">
       <Value Profile="(Default)">Quiet</Value>
     </Setting>
-    <Setting Name="MuteAlarmSound" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+    <Setting Name="Volume" Type="Plenom.Components.Busylight.Sdk.BusylightVolume" Scope="User">
+      <Value Profile="(Default)">Middle</Value>
     </Setting>
   </Settings>
 </SettingsFile>

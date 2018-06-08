@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using AutostartManagement;
 using CatlightApi;
 using CatlightBusylightNotifier.Properties;
 using Plenom.Components.Busylight.Sdk;
@@ -17,107 +16,26 @@ namespace CatlightBusylightNotifier
 
         private class MyCustomApplicationContext : ApplicationContext
         {
-            private readonly AutostartManager _autostartManager = new AutostartManager(Application.ExecutablePath);
             private readonly BusylightLyncController _busylightLyncController = new BusylightLyncController();
             private readonly CatlightConnector _catlightConnector = new CatlightConnector();
-            private MenuItem _autostartMenuItem;
+
             private BusylightColor _currentBusylightColor = BusylightColor.Off;
-            private MenuItem _muteAlarmSoundMenuItem;
-            private MenuItem _soundMenuItem;
 
             public MyCustomApplicationContext()
             {
-                CreateContextMenu();
+                // ReSharper disable once ObjectCreationAsStatement
+                new NotifyIcon
+                {
+                    Text = @"Catlight Busylight Notifier",
+                    Icon = Resources._1481754117_traffic,
+                    ContextMenu = new ContextMenu(PlayAlarm),
+                    Visible = true
+                };
 
                 var updateStatusTimer = new Timer {Interval = 5000};
                 updateStatusTimer.Tick += (sender, e) => UpdateStatus();
                 UpdateStatus();
                 updateStatusTimer.Start();
-            }
-
-            private void CreateContextMenu()
-            {
-                var trayMenu = new ContextMenu();
-
-                _autostartMenuItem = new MenuItem(string.Empty, OnAutostartToggle);
-                trayMenu.MenuItems.Add(_autostartMenuItem);
-                UpdateAutostartMenuItemText();
-
-                _muteAlarmSoundMenuItem = new MenuItem(string.Empty, OnMuteAlarmSoundToggle);
-                trayMenu.MenuItems.Add(_muteAlarmSoundMenuItem);
-
-                _soundMenuItem = new MenuItem("Alarmsound On Broken Build");
-                trayMenu.MenuItems.Add(_soundMenuItem);
-                foreach (Enum soundClip in Enum.GetValues(typeof(BusylightSoundClip)))
-                {
-                    _soundMenuItem.MenuItems.Add(soundClip.ToString(), SoundChanged);
-                    UpdateSelectedSoundMenuItemMenu();
-                }
-                UpdateMuteAlarmSoundMenuItemText();
-
-                trayMenu.MenuItems.Add("Exit", OnExit);
-
-                var notifyIcon = new NotifyIcon
-                {
-                    Text = @"Catlight Busylight Notifier",
-                    Icon = Resources._1481754117_traffic,
-                    ContextMenu = trayMenu,
-                    Visible = true
-                };
-            }
-
-            private void OnAutostartToggle(object sender, EventArgs e)
-            {
-                var isAutostartEnabled = _autostartManager.IsAutostartEnabled();
-
-                if (isAutostartEnabled)
-                    _autostartManager.DisableAutostart();
-                else
-                    _autostartManager.EnableAutostart();
-
-                UpdateAutostartMenuItemText();
-            }
-
-            private void UpdateAutostartMenuItemText()
-            {
-                _autostartMenuItem.Text = _autostartManager.IsAutostartEnabled()
-                    ? "Don't Run At System Startup"
-                    : "Run At System Startup";
-            }
-
-            private void OnMuteAlarmSoundToggle(object sender, EventArgs e)
-            {
-                var isAlarmSoundMuted = Settings.Default.MuteAlarmSound;
-                Settings.Default.MuteAlarmSound = !isAlarmSoundMuted;
-                Settings.Default.Save();
-                UpdateMuteAlarmSoundMenuItemText();
-            }
-
-            private void UpdateMuteAlarmSoundMenuItemText()
-            {
-                _muteAlarmSoundMenuItem.Text = Settings.Default.MuteAlarmSound
-                    ? "Enable Alarmsound On Broken Build"
-                    : "Disable Alarmsound On Broken Build";
-
-                _soundMenuItem.Enabled = !Settings.Default.MuteAlarmSound;
-            }
-
-            private void SoundChanged(object sender, EventArgs e)
-            {
-                Enum.TryParse(((MenuItem) sender).Text, out BusylightSoundClip soundClip);
-                Settings.Default.AlarmSound = soundClip;
-                _busylightLyncController.Alert(_currentBusylightColor, Settings.Default.AlarmSound,
-                    BusylightVolume.Low);
-                UpdateSelectedSoundMenuItemMenu();
-            }
-
-            private void UpdateSelectedSoundMenuItemMenu()
-            {
-                foreach (MenuItem menuItem in _soundMenuItem.MenuItems)
-                {
-                    var isCurrentSound = menuItem.Text == Settings.Default.AlarmSound.ToString();
-                    menuItem.Checked = isCurrentSound;
-                }
             }
 
             private void UpdateStatus()
@@ -149,22 +67,26 @@ namespace CatlightBusylightNotifier
                         throw new ArgumentOutOfRangeException();
                 }
 
-                var playAlarmSound = !Settings.Default.MuteAlarmSound && newBusylightColor == BusylightColor.Red &&
-                                     _currentBusylightColor != BusylightColor.Red;
+                var playAlarm = newBusylightColor == BusylightColor.Red && _currentBusylightColor != BusylightColor.Red;
 
-                if (playAlarmSound)
-                    _busylightLyncController.Alert(newBusylightColor, Settings.Default.AlarmSound,
-                        BusylightVolume.Middle);
+                if (playAlarm)
+                    PlayAlarm();
                 else
                     _busylightLyncController.Light(newBusylightColor);
 
                 _currentBusylightColor = newBusylightColor;
             }
 
-            private void OnExit(object sender, EventArgs e)
+            private void PlayAlarm()
             {
+                _busylightLyncController.Alert(_currentBusylightColor, Settings.Default.Sound,
+                    Settings.Default.Volume);
+            }
+
+            protected override void Dispose(bool disposing)
+            {
+                base.Dispose(disposing);
                 _busylightLyncController.Light(BusylightColor.Off);
-                Application.Exit();
             }
         }
     }
