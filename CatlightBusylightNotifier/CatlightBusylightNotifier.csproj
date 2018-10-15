@@ -43,9 +43,8 @@
     <Reference Include="AutostartManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\AutostartManager.1.0.0\lib\net452\AutostartManager.dll</HintPath>
     </Reference>
-    <Reference Include="Busylight.Sdk, Version=1.0.1.25, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Busylight.1.0.1.25\lib\Busylight.Sdk.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="BusylightSDK, Version=3.0.0.6, Culture=neutral, PublicKeyToken=88732c0bc3658f90, processorArchitecture=MSIL">
+      <HintPath>..\packages\Kuando.Busylight.3.0.0.6\lib\BusylightSDK.dll</HintPath>
     </Reference>
     <Reference Include="CatlightApi, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CatlightApi.1.0.4\lib\net40\CatlightApi.dll</HintPath>

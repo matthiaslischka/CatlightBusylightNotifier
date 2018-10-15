@@ -2,10 +2,10 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="CatlightBusylightNotifier.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="Sound" Type="Plenom.Components.Busylight.Sdk.BusylightSoundClip" Scope="User">
+    <Setting Name="Sound" Type="Busylight.BusylightSoundClip" Scope="User">
       <Value Profile="(Default)">Quiet</Value>
     </Setting>
-    <Setting Name="Volume" Type="Plenom.Components.Busylight.Sdk.BusylightVolume" Scope="User">
+    <Setting Name="Volume" Type="Busylight.BusylightVolume" Scope="User">
       <Value Profile="(Default)">Middle</Value>
     </Setting>
   </Settings>

@@ -12,7 +12,7 @@ namespace CatlightBusylightNotifier.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.5.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.8.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -26,9 +26,9 @@ namespace CatlightBusylightNotifier.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Quiet")]
-        public global::Plenom.Components.Busylight.Sdk.BusylightSoundClip Sound {
+        public global::Busylight.BusylightSoundClip Sound {
             get {
-                return ((global::Plenom.Components.Busylight.Sdk.BusylightSoundClip)(this["Sound"]));
+                return ((global::Busylight.BusylightSoundClip)(this["Sound"]));
             }
             set {
                 this["Sound"] = value;
@@ -38,9 +38,9 @@ namespace CatlightBusylightNotifier.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Middle")]
-        public global::Plenom.Components.Busylight.Sdk.BusylightVolume Volume {
+        public global::Busylight.BusylightVolume Volume {
             get {
-                return ((global::Plenom.Components.Busylight.Sdk.BusylightVolume)(this["Volume"]));
+                return ((global::Busylight.BusylightVolume)(this["Volume"]));
             }
             set {
                 this["Volume"] = value;

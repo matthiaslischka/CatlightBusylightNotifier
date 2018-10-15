@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
 using AutostartManagement;
+using Busylight;
 using CatlightBusylightNotifier.Properties;
-using Plenom.Components.Busylight.Sdk;
 
 namespace CatlightBusylightNotifier
 {
@@ -43,7 +43,7 @@ namespace CatlightBusylightNotifier
 
         private void SoundChanged(object sender, EventArgs e)
         {
-            Enum.TryParse(((MenuItem) sender).Text, out BusylightSoundClip soundClip);
+            Enum.TryParse(((MenuItem)sender).Text, out BusylightSoundClip soundClip);
             Settings.Default.Sound = soundClip;
             Settings.Default.Save();
             _playAlarm();
@@ -61,7 +61,7 @@ namespace CatlightBusylightNotifier
 
         private void VolumeChanged(object sender, EventArgs e)
         {
-            Enum.TryParse(((MenuItem) sender).Text, out BusylightVolume volume);
+            Enum.TryParse(((MenuItem)sender).Text, out BusylightVolume volume);
             Settings.Default.Volume = volume;
             Settings.Default.Save();
             _playAlarm();

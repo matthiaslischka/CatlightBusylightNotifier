@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
+using Busylight;
 using CatlightApi;
 using CatlightBusylightNotifier.Properties;
-using Plenom.Components.Busylight.Sdk;
 
 namespace CatlightBusylightNotifier
 {
@@ -16,7 +16,7 @@ namespace CatlightBusylightNotifier
 
         private class MyCustomApplicationContext : ApplicationContext
         {
-            private readonly BusylightLyncController _busylightLyncController = new BusylightLyncController();
+            private readonly SDK _busylightSdk = new SDK();
             private readonly CatlightConnector _catlightConnector = new CatlightConnector();
 
             private BusylightColor _currentBusylightColor = BusylightColor.Off;
@@ -32,7 +32,7 @@ namespace CatlightBusylightNotifier
                     Visible = true
                 };
 
-                var updateStatusTimer = new Timer {Interval = 5000};
+                var updateStatusTimer = new Timer { Interval = 5000 };
                 updateStatusTimer.Tick += (sender, e) => UpdateStatus();
                 UpdateStatus();
                 updateStatusTimer.Start();
@@ -72,21 +72,20 @@ namespace CatlightBusylightNotifier
                 if (playAlarm)
                     PlayAlarm();
                 else
-                    _busylightLyncController.Light(newBusylightColor);
+                    _busylightSdk.Light(newBusylightColor);
 
                 _currentBusylightColor = newBusylightColor;
             }
 
             private void PlayAlarm()
             {
-                _busylightLyncController.Alert(_currentBusylightColor, Settings.Default.Sound,
-                    Settings.Default.Volume);
+                _busylightSdk.Alert(_currentBusylightColor, Settings.Default.Sound, Settings.Default.Volume);
             }
 
             protected override void Dispose(bool disposing)
             {
                 base.Dispose(disposing);
-                _busylightLyncController.Light(BusylightColor.Off);
+                _busylightSdk.Light(BusylightColor.Off);
             }
         }
     }
